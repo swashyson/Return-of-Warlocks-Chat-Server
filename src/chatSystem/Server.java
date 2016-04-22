@@ -41,6 +41,7 @@ public class Server {
 
         Thread t1 = new Thread(new Runnable() {
             public void run() {
+                System.out.println("Starting Server...");
                 while (true) {
 
                     try {
