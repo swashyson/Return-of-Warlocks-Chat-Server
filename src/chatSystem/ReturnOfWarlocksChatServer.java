@@ -19,7 +19,7 @@ public class ReturnOfWarlocksChatServer extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/layouts/FXMLDocument.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/layouts/FXMLDocumentChat.fxml"));
         
         Scene scene = new Scene(root);
         

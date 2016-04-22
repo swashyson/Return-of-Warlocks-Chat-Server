@@ -5,7 +5,8 @@
  */
 package chatSystem;
 
-import controllers.FXMLDocumentController;
+import controllers.FXMLDocumentControllerChat;
+import dataStorage.realDataStorage;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -61,6 +62,7 @@ public class Server {
 
                         clientSocket = serverSocket.accept();
                         System.out.println("Client Connected");
+                        realDataStorage.appendTextArea("Client Connected\n");
                         chatHandler chath = new chatHandler(clientSocket);
                         chath.start();
 
@@ -80,7 +82,6 @@ public class Server {
         t1.start();
 
     }
-
 
     private static class chatHandler extends Thread {
 

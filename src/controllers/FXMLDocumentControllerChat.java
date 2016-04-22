@@ -6,6 +6,7 @@
 package controllers;
 
 import chatSystem.Server;
+import dataStorage.realDataStorage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -25,7 +26,7 @@ import javafx.scene.layout.Pane;
  *
  * @author Swashy
  */
-public class FXMLDocumentController implements Initializable {
+public class FXMLDocumentControllerChat implements Initializable {
 
     @FXML
     private Label label;
@@ -52,9 +53,13 @@ public class FXMLDocumentController implements Initializable {
         chatSystem.Server server = new Server();
         server.CreateServer(9006);
         allChat.appendText("Creating server...\n");
+        
+                realDataStorage.setTextArea(allChat);
+        
         server.StartServer(9006);
         allChat.appendText("Starting server...\n");
         allChat.appendText("Waiting for connection...\n");
+        
         
         
 
