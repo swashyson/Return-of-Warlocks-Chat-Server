@@ -11,8 +11,17 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.Parent;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.Pane;
 
 /**
  *
@@ -42,6 +51,10 @@ public class Server {
         Thread t1 = new Thread(new Runnable() {
             public void run() {
                 System.out.println("Starting Server...");
+                waitForConnect();
+            }
+
+            private void waitForConnect() {
                 while (true) {
 
                     try {
@@ -53,6 +66,13 @@ public class Server {
 
                     } catch (IOException e) {
                         System.out.println("Client failed to connect!");
+                    } finally {
+
+                        try {
+                            serverSocket.close();
+                        } catch (IOException ex) {
+                            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             }
@@ -60,6 +80,7 @@ public class Server {
         t1.start();
 
     }
+
 
     private static class chatHandler extends Thread {
 

@@ -6,13 +6,20 @@
 package controllers;
 
 import chatSystem.Server;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Pane;
 
 /**
  *
@@ -24,6 +31,14 @@ public class FXMLDocumentController implements Initializable {
     private Label label;
     @FXML
     private TextArea allChat;
+
+    public TextArea getAllChat() {
+        return allChat;
+    }
+
+    public void setAllChat(TextArea allChat) {
+        this.allChat = allChat;
+    }
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
@@ -40,6 +55,8 @@ public class FXMLDocumentController implements Initializable {
         server.StartServer(9006);
         allChat.appendText("Starting server...\n");
         allChat.appendText("Waiting for connection...\n");
+        
+        
 
     }
 
