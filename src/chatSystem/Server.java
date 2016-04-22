@@ -16,6 +16,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
@@ -33,7 +34,23 @@ public class Server {
     private static final int PORT = 9006;
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    private PrintWriter out;
+
+    public Server() {
+
+        startBroadCastSystem();
+        
+    }
+
+    public void startBroadCastSystem() {
+
+        Thread t2 = new Thread(new Runnable() {
+            public void run() {
+                broadCast();
+            }
+        });
+        t2.start();
+
+    }
 
     public void CreateServer(int port) {
 
@@ -65,21 +82,52 @@ public class Server {
                         realDataStorage.appendTextArea("Client Connected\n");
                         chatHandler chath = new chatHandler(clientSocket);
                         chath.start();
+                        broadCastSystem.addClientSockets(clientSocket);
+                        System.out.println("Jump to chatHandler");
 
                     } catch (IOException e) {
                         System.out.println("Client failed to connect!");
-                    } finally {
 
-                        try {
-                            serverSocket.close();
-                        } catch (IOException ex) {
-                            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                        }
                     }
                 }
             }
         });
         t1.start();
+
+    }
+
+    public void broadCast() {
+
+        PrintWriter out = null;
+
+        int i = 0;
+        while (true) {
+
+            if (!broadCastSystem.getClientSockets().isEmpty() && !broadCastSystem.getBroadCastList().isEmpty()) {
+                for (i = 0; i < broadCastSystem.getClientSockets().size(); i++) {
+
+                    try {
+                        Socket temp = (Socket) broadCastSystem.getClientSockets().get(i);
+                        out = new PrintWriter(temp.getOutputStream(), true);
+
+                        if (!broadCastSystem.getBroadCastList().isEmpty()) {
+                            out.println(broadCastSystem.getBroadCastList().get(0));
+                            out.flush();
+                        }
+
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                if (!broadCastSystem.getBroadCastList().isEmpty()) {
+                    broadCastSystem.getBroadCastList().remove(0);
+                }
+            } else {
+
+                System.out.println("None connected/no messages detected" + i);
+                i = 0;
+            }
+        }
 
     }
 
@@ -92,10 +140,24 @@ public class Server {
             this.clientSocket = clientSocket;
 
         }
+
+        @Override
+        public void run() {
+            BufferedReader in;
+
+            try {
+
+                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+                while (true) {
+                    String test = in.readLine();
+                    realDataStorage.appendTextArea(test + "\n");
+                    broadCastSystem.addToList(test);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
-    public void run() {
-
-        //Kör chatten här
-    }
 }
