@@ -15,10 +15,12 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
@@ -38,17 +40,19 @@ public class Server {
     public Server() {
 
         startBroadCastSystem();
-        
+
     }
 
     public void startBroadCastSystem() {
 
-        Thread t2 = new Thread(new Runnable() {
-            public void run() {
+        Task task = new Task<Void>() {
+            @Override
+            public Void call() {
                 broadCast();
+                return null;
             }
-        });
-        t2.start();
+        };
+        new Thread(task).start();
 
     }
 
@@ -66,17 +70,11 @@ public class Server {
 
     public void StartServer(int port) {
 
-        Thread t1 = new Thread(new Runnable() {
-            public void run() {
-                System.out.println("Starting Server...");
-                waitForConnect();
-            }
-
-            private void waitForConnect() {
+        Task task = new Task<Void>() {
+            @Override
+            public Void call() {
                 while (true) {
-
                     try {
-
                         clientSocket = serverSocket.accept();
                         System.out.println("Client Connected");
                         realDataStorage.appendTextArea("Client Connected\n");
@@ -85,15 +83,14 @@ public class Server {
                         broadCastSystem.addClientSockets(clientSocket);
                         System.out.println("Jump to chatHandler");
 
-                    } catch (IOException e) {
-                        System.out.println("Client failed to connect!");
-
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
+                    return null;
                 }
             }
-        });
-        t1.start();
-
+        };
+        new Thread(task).start();
     }
 
     public void broadCast() {
@@ -124,7 +121,7 @@ public class Server {
                 }
             } else {
 
-                System.out.println("None connected/no messages detected" + i);
+                System.out.print("");
                 i = 0;
             }
         }
@@ -154,8 +151,20 @@ public class Server {
                     realDataStorage.appendTextArea(test + "\n");
                     broadCastSystem.addToList(test);
                 }
+            } catch (SocketException ex) {
+                removeIfDisconnected();
+            } catch (Exception ex2) {
+
+                ex2.printStackTrace();
+            }
+        }
+
+        private void removeIfDisconnected() {
+            try {
+                clientSocket.close();
+                broadCastSystem.getBroadCastList().remove(clientSocket);
             } catch (IOException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
             }
         }
     }
