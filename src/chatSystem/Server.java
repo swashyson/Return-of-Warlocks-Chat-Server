@@ -79,13 +79,14 @@ public class Server {
                         clientSocket = serverSocket.accept();
                         System.out.println("Client Connected");
                         Platform.runLater(new Runnable() {
-                           @Override
+                            @Override
                             public void run() {
-                             realDataStorage.appendTextArea("Client Connected\n");
-                        chatHandler chath = new chatHandler(clientSocket);
-                        chath.start();
-                        broadCastSystem.addClientSockets(clientSocket);
-                        System.out.println("Jump to chatHandler");   
+                                realDataStorage.appendTextArea("Client Connected\n");
+                                chatHandler chath = new chatHandler(clientSocket);
+                                chath.start();
+                                broadCastSystem.addClientSockets(clientSocket);
+                                System.out.println("Jump to chatHandler"); 
+                                StartServer(port);
                             }
                         });
                         
@@ -98,6 +99,7 @@ public class Server {
             }
         };
         new Thread(task).start();
+        
     }
 
     public void broadCast() {
