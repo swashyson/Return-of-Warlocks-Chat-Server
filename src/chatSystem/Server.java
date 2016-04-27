@@ -37,6 +37,7 @@ public class Server {
     private static final int PORT = 9006;
     private ServerSocket serverSocket;
     private Socket clientSocket;
+    String userName = "";
 
     public Server() {
 
@@ -70,23 +71,31 @@ public class Server {
     }
 
     public void StartServer(int port) {
-
+       
         Task task = new Task<Void>() {
             @Override
             public Void call() {
                 while (true) {
+                    
                     try {
+                        
                         clientSocket = serverSocket.accept();
-                        System.out.println("Client Connected");
+                        
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                realDataStorage.appendTextArea("Client Connected\n");
+                                try {
+                                
+                                realDataStorage.appendTextArea(userName + " Connected\n");
                                 chatHandler chath = new chatHandler(clientSocket);
                                 chath.start();
                                 broadCastSystem.addClientSockets(clientSocket);
                                 System.out.println("Jump to chatHandler"); 
                                 StartServer(port);
+                                
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
                             }
                         });
                         
