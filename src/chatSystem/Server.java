@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
@@ -77,11 +78,17 @@ public class Server {
                     try {
                         clientSocket = serverSocket.accept();
                         System.out.println("Client Connected");
-                        realDataStorage.appendTextArea("Client Connected\n");
+                        Platform.runLater(new Runnable() {
+                           @Override
+                            public void run() {
+                             realDataStorage.appendTextArea("Client Connected\n");
                         chatHandler chath = new chatHandler(clientSocket);
                         chath.start();
                         broadCastSystem.addClientSockets(clientSocket);
-                        System.out.println("Jump to chatHandler");
+                        System.out.println("Jump to chatHandler");   
+                            }
+                        });
+                        
 
                     } catch (IOException ex) {
                         ex.printStackTrace();
@@ -137,7 +144,7 @@ public class Server {
             this.clientSocket = clientSocket;
 
         }
-
+        
         @Override
         public void run() {
             BufferedReader in;
@@ -158,6 +165,7 @@ public class Server {
                 ex2.printStackTrace();
             }
         }
+        
 
         private void removeIfDisconnected() {
             try {

@@ -10,6 +10,7 @@ import controllers.FXMLDocumentControllerChat;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
@@ -31,8 +32,14 @@ final public class realDataStorage {
     }
     
     public static void appendTextArea(String value){
-    
-        textArea.appendText(value);
+        Platform.runLater(new Runnable() {
+                           @Override
+                            public void run() {
+                                textArea.appendText(value); 
+                            }
+                        });
+        System.out.println(value);
+        
     }
     
     public realDataStorage(){
