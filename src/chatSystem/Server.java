@@ -6,6 +6,7 @@
 package chatSystem;
 
 import controllers.FXMLDocumentControllerChat;
+import dataStorage.NamesAndLobbysStorage;
 import dataStorage.realDataStorage;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -55,7 +56,6 @@ public class Server {
             }
         };
         new Thread(task).start();
-
     }
 
     public void CreateServer(int port) {
@@ -71,34 +71,33 @@ public class Server {
     }
 
     public void StartServer(int port) {
-       
+
         Task task = new Task<Void>() {
             @Override
             public Void call() {
                 while (true) {
-                    
+
                     try {
-                        
+
                         clientSocket = serverSocket.accept();
-                        
+
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
                                 try {
-                                
-                                realDataStorage.appendTextArea(userName + " Connected\n");
-                                chatHandler chath = new chatHandler(clientSocket);
-                                chath.start();
-                                broadCastSystem.addClientSockets(clientSocket);
-                                System.out.println("Jump to chatHandler"); 
-                                StartServer(port);
-                                
+
+                                    chatHandler chath = new chatHandler(clientSocket);
+                                    chath.start();
+                                    broadCastSystem.addClientSockets(clientSocket);
+
+                                    System.out.println("Jump to chatHandler");
+                                    StartServer(port);
+
                                 } catch (Exception ex) {
                                     ex.printStackTrace();
                                 }
                             }
                         });
-                        
 
                     } catch (IOException ex) {
                         ex.printStackTrace();
@@ -108,7 +107,7 @@ public class Server {
             }
         };
         new Thread(task).start();
-        
+
     }
 
     public void broadCast() {
@@ -126,6 +125,7 @@ public class Server {
                         out = new PrintWriter(temp.getOutputStream(), true);
 
                         if (!broadCastSystem.getBroadCastList().isEmpty()) {
+
                             out.println(broadCastSystem.getBroadCastList().get(0));
                             out.flush();
                         }
@@ -146,6 +146,30 @@ public class Server {
 
     }
 
+    public static void broadCastPlayerNames() {
+
+        PrintWriter out = null;
+
+        System.out.println("HELLO " + NamesAndLobbysStorage.getNames().size());
+
+        for (int j = 0; j < broadCastSystem.getClientSockets().size(); j++) {
+
+            try {
+                Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
+                out = new PrintWriter(temp.getOutputStream(), true);
+
+                    out.println("|||||" + NamesAndLobbysStorage.getNames());
+                    out.flush();
+                    System.out.println("TEST");
+
+                
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
     private static class chatHandler extends Thread {
 
         private Socket clientSocket;
@@ -155,33 +179,44 @@ public class Server {
             this.clientSocket = clientSocket;
 
         }
-        
+
         @Override
         public void run() {
             BufferedReader in;
-
+            String name = "";
             try {
 
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
                 while (true) {
                     String test = in.readLine();
-                    realDataStorage.appendTextArea(test + "\n");
-                    broadCastSystem.addToList(test);
+                    if (test.contains("|||||")) {
+                        name = test.substring(5);
+                        NamesAndLobbysStorage.getNames().add(name);
+                        realDataStorage.appendTextArea("Client '" + name + "' Connected" + " at Socket: " + clientSocket +  "\n");
+                        Server.broadCastPlayerNames();
+
+                    } else {
+                        realDataStorage.appendTextArea(test + "\n");
+                        broadCastSystem.addToList(test);
+                    }
                 }
             } catch (SocketException ex) {
-                removeIfDisconnected();
+                removeIfDisconnected(name);
             } catch (Exception ex2) {
 
                 ex2.printStackTrace();
             }
         }
-        
 
-        private void removeIfDisconnected() {
+        private void removeIfDisconnected(String name) {
             try {
                 clientSocket.close();
                 broadCastSystem.getBroadCastList().remove(clientSocket);
+                broadCastSystem.getClientSockets().remove(clientSocket);
+                NamesAndLobbysStorage.getNames().remove(name);
+                realDataStorage.appendTextArea("Client '" + name + "' Disconnected" + " at Socket: " + clientSocket +  "\n");
+                Server.broadCastPlayerNames();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
