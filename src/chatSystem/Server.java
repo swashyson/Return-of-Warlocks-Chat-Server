@@ -240,6 +240,7 @@ public class Server {
 
         @Override
         public void run() {
+            System.out.println("Test");
             BufferedReader in;
             String name = "";
             try {
