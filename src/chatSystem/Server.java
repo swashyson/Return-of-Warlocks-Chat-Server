@@ -158,11 +158,69 @@ public class Server {
                 Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
                 out = new PrintWriter(temp.getOutputStream(), true);
 
-                    out.println("|||||" + NamesAndLobbysStorage.getNames());
-                    out.flush();
-                    System.out.println("TEST");
+                out.println("|||||" + NamesAndLobbysStorage.getNames());
+                out.flush();
 
-                
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    public static void broadCastLobbys() {
+
+        PrintWriter out = null;
+
+        for (int j = 0; j < broadCastSystem.getClientSockets().size(); j++) {
+
+            try {
+                Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
+                out = new PrintWriter(temp.getOutputStream(), true);
+
+                out.println("||||&" + NamesAndLobbysStorage.getLobbys());
+                out.flush();
+
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    public static void broadCastLobbyMasterPORT() {
+
+        PrintWriter out = null;
+
+        for (int j = 0; j < broadCastSystem.getClientSockets().size(); j++) {
+
+            try {
+                Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
+                out = new PrintWriter(temp.getOutputStream(), true);
+
+                out.println("||||%" + NamesAndLobbysStorage.getMasterPORT());
+                out.flush();
+
+            } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    public static void broadCastLobbyMasterIP() {
+
+        PrintWriter out = null;
+
+        for (int j = 0; j < broadCastSystem.getClientSockets().size(); j++) {
+
+            try {
+                Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
+                out = new PrintWriter(temp.getOutputStream(), true);
+
+                out.println("||||!" + NamesAndLobbysStorage.getMasterIP());
+                out.flush();
+
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -182,6 +240,7 @@ public class Server {
 
         @Override
         public void run() {
+            System.out.println("Test");
             BufferedReader in;
             String name = "";
             try {
@@ -189,12 +248,33 @@ public class Server {
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
                 while (true) {
+
                     String test = in.readLine();
                     if (test.contains("|||||")) {
                         name = test.substring(5);
                         NamesAndLobbysStorage.getNames().add(name);
-                        realDataStorage.appendTextArea("Client '" + name + "' Connected" + " at Socket: " + clientSocket +  "\n");
                         Server.broadCastPlayerNames();
+
+                    } else if (test.contains("||||&")) {
+
+                        name = test.substring(5);
+                        realDataStorage.appendTextArea("Client '" + name + "' Created a new Lobby" + " at Socket: " + clientSocket + "\n");
+                        NamesAndLobbysStorage.getLobbys().add(name + " 's Lobby");
+                        Server.broadCastLobbys();
+
+                    } else if (test.contains("||||%")) {
+
+                        name = test.substring(5);
+                        NamesAndLobbysStorage.getMasterPORT().add(name);
+                        realDataStorage.appendTextArea("Created the lobby with MasterPort: " + name + "\n");
+                        Server.broadCastLobbyMasterPORT();
+
+                    } else if (test.contains("||||!")) {
+
+                        name = test.substring(5);
+                        NamesAndLobbysStorage.getMasterIP().add(name);
+                        realDataStorage.appendTextArea("Created the lobby with MasterIP: " + name + "\n");
+                        Server.broadCastLobbyMasterIP();
 
                     } else {
                         realDataStorage.appendTextArea(test + "\n");
@@ -203,9 +283,11 @@ public class Server {
                 }
             } catch (SocketException ex) {
                 removeIfDisconnected(name);
+                ex.printStackTrace();
             } catch (Exception ex2) {
 
                 ex2.printStackTrace();
+                System.out.println("BUGG");
             }
         }
 
@@ -215,8 +297,15 @@ public class Server {
                 broadCastSystem.getBroadCastList().remove(clientSocket);
                 broadCastSystem.getClientSockets().remove(clientSocket);
                 NamesAndLobbysStorage.getNames().remove(name);
-                realDataStorage.appendTextArea("Client '" + name + "' Disconnected" + " at Socket: " + clientSocket +  "\n");
+                NamesAndLobbysStorage.getLobbys().remove(name + " 's Lobby");
+                NamesAndLobbysStorage.getMasterPORT().remove(name);
+                NamesAndLobbysStorage.getMasterIP().remove(name);
+                realDataStorage.appendTextArea("Client '" + name + "' Disconnected" + " at Socket: " + clientSocket + "\n");
+                Server.broadCastLobbys();
                 Server.broadCastPlayerNames();
+                Server.broadCastLobbyMasterPORT();
+                Server.broadCastLobbyMasterIP();
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
