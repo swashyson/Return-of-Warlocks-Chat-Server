@@ -45,7 +45,7 @@ public class Server {
         startBroadCastSystem();
 
     }
-
+    
     public void startBroadCastSystem() {
 
         Task task = new Task<Void>() {
@@ -221,6 +221,7 @@ public class Server {
                 ex.printStackTrace();
             }
         }
+        
     }
 
 }

@@ -9,7 +9,7 @@
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.FXMLDocumentControllerChat">
    <children>
       <TextArea fx:id="allChat" editable="false" prefHeight="373.0" prefWidth="800.0" />
-      <TextField layoutY="374.0" prefHeight="25.0" prefWidth="720.0" />
-      <Button layoutX="720.0" layoutY="374.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Send" />
+      <TextField fx:id="ServerTF" layoutY="374.0" prefHeight="25.0" prefWidth="720.0" />
+      <Button fx:id="sendButton" layoutX="720.0" layoutY="374.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Send" onAction="#sendButton_onAction" />
    </children>
 </AnchorPane>
