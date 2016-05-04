@@ -286,6 +286,19 @@ public class Server {
                         System.out.println("remove lobby request");
                         System.out.println("||||3: "+name);
                         disconnnectLobby(name);
+                        System.out.println(clientSocket.getRemoteSocketAddress() + "remote");
+                        
+                    
+                    }else if (test.contains("||||4")){
+                        name = test.substring(5);
+                        System.out.println("remove ip request IP:"+name);
+                        removeMasterIP(name);
+                        
+                    
+                    }else if (test.contains("||||5")){
+                        name = test.substring(5);
+                        System.out.println("remove port request port:" + name);
+                        removeMasterPort(name);
                         
                     
                     }else {
@@ -307,6 +320,14 @@ public class Server {
             System.out.println(NamesAndLobbysStorage.getLobbys().get(0));
             NamesAndLobbysStorage.getLobbys().remove(name);
             
+        }
+        private void removeMasterPort(String port ){
+            NamesAndLobbysStorage.getMasterPORT().remove(port);
+            System.out.println("remove port: "+port);
+        }
+        private void removeMasterIP(String ip ){
+            NamesAndLobbysStorage.getMasterIP().remove(ip);
+            System.out.println("remove iP: "+ip);
         }
         private void removeIfDisconnected(String name) {
             try {
