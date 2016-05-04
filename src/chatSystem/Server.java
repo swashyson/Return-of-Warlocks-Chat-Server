@@ -259,7 +259,7 @@ public class Server {
 
                         name = test.substring(5);
                         realDataStorage.appendTextArea("Client '" + name + "' Created a new Lobby" + " at Socket: " + clientSocket + "\n");
-                        NamesAndLobbysStorage.getLobbys().add(name + " 's Lobby");
+                        NamesAndLobbysStorage.getLobbys().add(name.replace("[", "").replace("]", "") + " 's Lobby");
                         Server.broadCastLobbys();
 
                     } else if (test.contains("||||%")) {
@@ -276,7 +276,19 @@ public class Server {
                         realDataStorage.appendTextArea("Created the lobby with MasterIP: " + name + "\n");
                         Server.broadCastLobbyMasterIP();
 
-                    } else {
+                    }else if (test.contains("||||1")){
+                        System.out.println("name request");
+                        broadCastPlayerNames();
+                        
+                    
+                    }else if (test.contains("||||3")){
+                        name = test.substring(5);
+                        System.out.println("remove lobby request");
+                        System.out.println("||||3: "+name);
+                        disconnnectLobby(name);
+                        
+                    
+                    }else {
                         realDataStorage.appendTextArea(test + "\n");
                         broadCastSystem.addToList(test);
                     }
@@ -290,7 +302,12 @@ public class Server {
                 System.out.println("BUGG");
             }
         }
-
+        
+        private void disconnnectLobby(String name){
+            System.out.println(NamesAndLobbysStorage.getLobbys().get(0));
+            NamesAndLobbysStorage.getLobbys().remove(name);
+            
+        }
         private void removeIfDisconnected(String name) {
             try {
                 clientSocket.close();
