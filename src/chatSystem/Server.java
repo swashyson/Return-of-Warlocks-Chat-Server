@@ -328,7 +328,6 @@ public class Server {
             } catch (Exception ex2) {
 
                 ex2.printStackTrace();
-                System.out.println("BUGG");
             }
         }
 
