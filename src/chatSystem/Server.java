@@ -45,7 +45,7 @@ public class Server {
         startBroadCastSystem();
 
     }
-    
+
     public void startBroadCastSystem() {
 
         Task task = new Task<Void>() {
@@ -157,9 +157,9 @@ public class Server {
             try {
                 Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
                 out = new PrintWriter(temp.getOutputStream(), true);
-                
+
                 out.println("|||||" + NamesAndLobbysStorage.getNames());
-                System.out.println("sending a ||||| message to "+NamesAndLobbysStorage.getNames());
+                System.out.println("sending a ||||| message to " + NamesAndLobbysStorage.getNames());
                 out.flush();
 
             } catch (IOException ex) {
@@ -178,9 +178,8 @@ public class Server {
             try {
                 Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
                 out = new PrintWriter(temp.getOutputStream(), true);
-
-                out.println("||||&" + NamesAndLobbysStorage.getLobbys());
-                out.flush();
+                    out.println("||||&" + NamesAndLobbysStorage.getLobbys());
+                    out.flush();
 
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -278,32 +277,32 @@ public class Server {
                         realDataStorage.appendTextArea("Created the lobby with MasterIP: " + name + "\n");
                         Server.broadCastLobbyMasterIP();
 
-                    }else if (test.contains("||||1")){// name request
+                    } else if (test.contains("||||1")) {// name request
                         System.out.println("name request");
                         broadCastPlayerNames();
-                        
-                    
-                    }else if (test.contains("||||3")){ // disconnect lobby request
+
+                    } else if (test.contains("||||2")) {
+                        System.out.println("LobbyListRequest");
+                        Server.broadCastLobbys();
+
+                    } else if (test.contains("||||3")) { // disconnect lobby request
                         name = test.substring(5);
                         System.out.println("remove lobby request");
-                        System.out.println("||||3: "+name);
+                        System.out.println("||||3: " + name);
                         disconnnectLobby(name);
                         System.out.println(clientSocket.getRemoteSocketAddress() + "remote");
-                        
-                    
-                    }else if (test.contains("||||4")){
+
+                    } else if (test.contains("||||4")) {
                         name = test.substring(5);
-                        System.out.println("remove ip request IP:"+name);
+                        System.out.println("remove ip request IP:" + name);
                         removeMasterIP(name);
-                        
-                    
-                    }else if (test.contains("||||5")){
+
+                    } else if (test.contains("||||5")) {
                         name = test.substring(5);
                         System.out.println("remove port request port:" + name);
                         removeMasterPort(name);
-                        
-                    
-                    }else {
+
+                    } else {
                         realDataStorage.appendTextArea(test + "\n");
                         broadCastSystem.addToList(test);
                     }
@@ -317,20 +316,23 @@ public class Server {
                 System.out.println("BUGG");
             }
         }
-        
-        private void disconnnectLobby(String name){
+
+        private void disconnnectLobby(String name) {
             System.out.println(NamesAndLobbysStorage.getLobbys().get(0));
             NamesAndLobbysStorage.getLobbys().remove(name);
-            
+
         }
-        private void removeMasterPort(String port ){
+
+        private void removeMasterPort(String port) {
             NamesAndLobbysStorage.getMasterPORT().remove(port);
-            System.out.println("remove port: "+port);
+            System.out.println("remove port: " + port);
         }
-        private void removeMasterIP(String ip ){
+
+        private void removeMasterIP(String ip) {
             NamesAndLobbysStorage.getMasterIP().remove(ip);
-            System.out.println("remove iP: "+ip);
+            System.out.println("remove iP: " + ip);
         }
+
         private void removeIfDisconnected(String name) {
             try {
                 clientSocket.close();
@@ -350,7 +352,7 @@ public class Server {
                 ex.printStackTrace();
             }
         }
-        
+
     }
 
 }
