@@ -178,8 +178,8 @@ public class Server {
             try {
                 Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
                 out = new PrintWriter(temp.getOutputStream(), true);
-                    out.println("||||&" + NamesAndLobbysStorage.getLobbys());
-                    out.flush();
+                out.println("||||&" + NamesAndLobbysStorage.getLobbys());
+                out.flush();
 
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -302,6 +302,16 @@ public class Server {
                         System.out.println("remove port request port:" + name);
                         removeMasterPort(name);
 
+                    } else if (test.contains("||||6")) {
+                        name = test.substring(5);
+                        System.out.println("request IP for lobbys" + name);
+                        broadCastLobbyMasterIP();
+
+                    } else if (test.contains("||||7")) {
+                        name = test.substring(5);
+                        System.out.println("request PORT for lobbys" + name);
+                        broadCastLobbyMasterPORT();
+                        
                     } else {
                         realDataStorage.appendTextArea(test + "\n");
                         broadCastSystem.addToList(test);
