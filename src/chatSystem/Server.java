@@ -157,8 +157,9 @@ public class Server {
             try {
                 Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
                 out = new PrintWriter(temp.getOutputStream(), true);
-
+                
                 out.println("|||||" + NamesAndLobbysStorage.getNames());
+                System.out.println("sending a ||||| message to "+NamesAndLobbysStorage.getNames());
                 out.flush();
 
             } catch (IOException ex) {
@@ -250,12 +251,13 @@ public class Server {
                 while (true) {
 
                     String test = in.readLine();
-                    if (test.contains("|||||")) {
+                    if (test.contains("|||||")) { //add  name request and send back name list
+                        System.out.println("got a ||||| message ");
                         name = test.substring(5);
                         NamesAndLobbysStorage.getNames().add(name);
                         Server.broadCastPlayerNames();
 
-                    } else if (test.contains("||||&")) {
+                    } else if (test.contains("||||&")) { // add lobby request and send back lobbylist
 
                         name = test.substring(5);
                         realDataStorage.appendTextArea("Client '" + name + "' Created a new Lobby" + " at Socket: " + clientSocket + "\n");
@@ -276,12 +278,12 @@ public class Server {
                         realDataStorage.appendTextArea("Created the lobby with MasterIP: " + name + "\n");
                         Server.broadCastLobbyMasterIP();
 
-                    }else if (test.contains("||||1")){
+                    }else if (test.contains("||||1")){// name request
                         System.out.println("name request");
                         broadCastPlayerNames();
                         
                     
-                    }else if (test.contains("||||3")){
+                    }else if (test.contains("||||3")){ // disconnect lobby request
                         name = test.substring(5);
                         System.out.println("remove lobby request");
                         System.out.println("||||3: "+name);
