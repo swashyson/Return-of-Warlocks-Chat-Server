@@ -198,8 +198,10 @@ public class Server {
                 Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
                 out = new PrintWriter(temp.getOutputStream(), true);
 
-                out.println("||||%" + NamesAndLobbysStorage.getMasterPORT());
-                out.flush();
+                if (!NamesAndLobbysStorage.getMasterPORT().isEmpty()) {
+                    out.println("||||%" + NamesAndLobbysStorage.getMasterPORT());
+                    out.flush();
+                }
 
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -218,8 +220,10 @@ public class Server {
                 Socket temp = (Socket) broadCastSystem.getClientSockets().get(j);
                 out = new PrintWriter(temp.getOutputStream(), true);
 
-                out.println("||||!" + NamesAndLobbysStorage.getMasterIP());
-                out.flush();
+                if (!NamesAndLobbysStorage.getMasterIP().isEmpty()) {
+                    out.println("||||!" + NamesAndLobbysStorage.getMasterIP());
+                    out.flush();
+                }
 
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -311,7 +315,7 @@ public class Server {
                         name = test.substring(5);
                         System.out.println("request PORT for lobbys" + name);
                         broadCastLobbyMasterPORT();
-                        
+
                     } else {
                         realDataStorage.appendTextArea(test + "\n");
                         broadCastSystem.addToList(test);
