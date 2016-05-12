@@ -247,6 +247,7 @@ public class Server {
             System.out.println("Test");
             BufferedReader in;
             String name = "";
+            String realName = "";
             try {
 
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -257,6 +258,7 @@ public class Server {
                     if (test.contains("|||||")) { //add  name request and send back name list
                         System.out.println("got a ||||| message ");
                         name = test.substring(5);
+                        realName = test.substring(5);
                         NamesAndLobbysStorage.getNames().add(name);
                         Server.broadCastPlayerNames();
 
@@ -322,12 +324,10 @@ public class Server {
                     }
                 }
             } catch (SocketException ex) {
-                removeIfDisconnected(name);
-                ex.printStackTrace();
+                removeIfDisconnected(realName);
             } catch (Exception ex2) {
 
                 ex2.printStackTrace();
-                System.out.println("BUGG");
             }
         }
 
